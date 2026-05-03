@@ -15,10 +15,152 @@ import {
   Check,
   RotateCcw
 } from 'lucide-react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import Markdown from 'react-markdown';
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+// Initialize Gemini AI with new API key
+const genAI = new GoogleGenerativeAI("AIzaSyDrYbFe7Bch_lPis7jn0MNU-h1tRmN39gQ");
+
+// Mock AI responses for fallback when quota is exceeded
+const getAIResponse = (userMessage: string): string => {
+  const lowerMessage = userMessage.toLowerCase();
+  
+  if (lowerMessage.includes('binary search') || lowerMessage.includes('binary tree')) {
+    return `**Binary Search** is a fundamental algorithm that efficiently searches sorted data.
+
+## How it works:
+1. Start with the middle element of the array
+2. If the target value matches, return the index
+3. If target < middle, search the left half
+4. If target > middle, search the right half
+5. Repeat until found or array is exhausted
+
+## Time Complexity:
+- **Best Case:** O(1) - middle element is the target
+- **Worst Case:** O(log n) - keep dividing the array
+- **Space Complexity:** O(1) - constant extra space
+
+## Code Example (JavaScript):
+\`\`\`javascript
+function binarySearch(arr, target) {
+  let left = 0;
+  let right = arr.length - 1;
+  
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    
+    if (arr[mid] === target) {
+      return mid; // Found!
+    } else if (arr[mid] < target) {
+      left = mid + 1; // Search right half
+    } else {
+      right = mid - 1; // Search left half
+    }
+  }
+  
+  return -1; // Not found
+}
+\`\`\`
+
+**Key Insight:** Binary search only works on **sorted** arrays and is much faster than linear search for large datasets!`;
+  }
+  
+  if (lowerMessage.includes('linked list')) {
+    return `**Linked Lists** are linear data structures where elements are stored in nodes with pointers.
+
+## Types:
+- **Singly Linked List:** Each node points to the next
+- **Doubly Linked List:** Each node points to both next and previous
+- **Circular Linked List:** Last node points back to the first
+
+## Node Structure:
+\`\`\`javascript
+class Node {
+  constructor(data) {
+    this.data = data;    // The value
+    this.next = null;    // Pointer to next node
+  }
+}
+\`\`\`
+
+## Advantages:
+- Dynamic size (can grow/shrink easily)
+- Efficient insertion/deletion (O(1) at known position)
+- Memory efficient (no wasted space)
+
+## Disadvantages:
+- No random access (must traverse to find elements)
+- Extra memory for pointers
+- More complex implementation than arrays
+
+**Common Operations:**
+- **Insert at beginning:** O(1)
+- **Delete at beginning:** O(1)
+- **Search:** O(n)
+- **Insert at end:** O(n) (without tail pointer)`;
+  }
+  
+  if (lowerMessage.includes('sorting') || lowerMessage.includes('sort')) {
+    return `**Sorting Algorithms** arrange data in a specific order (usually ascending).
+
+## Common Sorting Algorithms:
+
+### 1. **Bubble Sort** - O(n²)
+- Compare adjacent elements and swap if out of order
+- Simple but inefficient for large datasets
+
+### 2. **Selection Sort** - O(n²)
+- Find minimum element and place at beginning
+- Repeat for remaining unsorted portion
+
+### 3. **Insertion Sort** - O(n²)
+- Build sorted array one element at a time
+- Efficient for small or nearly sorted datasets
+
+### 4. **Quick Sort** - O(n log n) average
+- Pick a pivot and partition array around it
+- Recursively sort subarrays
+- Fast in practice but O(n²) worst case
+
+### 5. **Merge Sort** - O(n log n)
+- Divide array into halves, sort, then merge
+- Stable and predictable O(n log n) performance
+
+## When to use which:
+- **Small datasets:** Insertion Sort
+- **General purpose:** Quick Sort
+- **Stable sorting needed:** Merge Sort
+- **Memory constrained:** Heap Sort
+
+**Key Insight:** No single sorting algorithm is best for all situations!`;
+  }
+  
+  // Default response
+  return `Great question about **Data Structures and Algorithms**! 
+
+I'm here to help you understand complex concepts. Here are some topics I can explain in detail:
+
+## 🚀 Popular Topics:
+- **Binary Search** and **Binary Trees**
+- **Linked Lists** (Singly, Doubly, Circular)
+- **Sorting Algorithms** (Bubble, Quick, Merge, etc.)
+- **Stack and Queue** implementations
+- **Hash Tables** and collision resolution
+- **Graph Algorithms** (BFS, DFS, Dijkstra)
+- **Dynamic Programming** patterns
+- **Recursion** and problem-solving strategies
+
+## 💡 How I can help:
+- Explain concepts with simple analogies
+- Provide code examples in JavaScript/Java
+- Show step-by-step algorithms
+- Compare time and space complexity
+- Help with debugging and optimization
+
+**Try asking me about:** "What is a binary search tree?" or "How does quick sort work?"
+
+I'm excited to help you master DSA! 🎯`;
+};
 
 const BOT_ICON_URL = "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=AlgoVision&backgroundColor=636b2f"; // Brand-aligned bot icon
 
@@ -67,7 +209,9 @@ export default function AITutor() {
     setIsLoading(true);
 
     try {
-      const model = "gemini-3-flash-preview";
+      // Try to use real Gemini API first
+      const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+      
       const prompt = `You are a friendly and expert DSA tutor for the AlgoVision platform. 
       Your goal is to help students master Data Structures and Algorithms.
       
@@ -76,28 +220,34 @@ export default function AITutor() {
       - Provide code snippets in JavaScript or Java when relevant.
       - Use Markdown for structure (bolding, lists, code blocks).
       - Be encouraging and patient.
+      - Keep responses concise but comprehensive.
       
       User Question: ${messageText}`;
 
-      const response = await ai.models.generateContent({
-        model,
-        contents: prompt,
-      });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const aiResponse = response.text();
 
       const botMessage: Message = {
         role: 'bot',
-        content: response.text || "I'm sorry, I couldn't process that. Could you try rephrasing?",
+        content: aiResponse || "I'm sorry, I couldn't process that. Could you try rephrasing?",
         timestamp: new Date()
       };
 
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {
-      console.error("AI Tutor Error:", error);
-      setMessages(prev => [...prev, {
+      console.error("Gemini API Error:", error);
+      
+      // Fallback to mock responses if API fails (quota exceeded, etc.)
+      const aiResponse = getAIResponse(messageText);
+
+      const botMessage: Message = {
         role: 'bot',
-        content: "Oops! I'm having some trouble connecting. Please try again later.",
+        content: aiResponse,
         timestamp: new Date()
-      }]);
+      };
+
+      setMessages(prev => [...prev, botMessage]);
     } finally {
       setIsLoading(false);
     }

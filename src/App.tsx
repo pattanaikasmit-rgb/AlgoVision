@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Navbar from './components/layout/Navbar';
 import AITutor from './components/AITutor';
+import DebugTest from './components/DebugTest';
 import { ToastProvider } from './components/Toast';
 
 export default function App() {
@@ -42,6 +43,7 @@ export default function App() {
                 <Route path="/community" element={<Community />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/settings" element={<Settings />} />
+                <Route path="/debug" element={<DebugTest />} />
                 <Route path="/visualize/:category/:algorithm" element={<Visualizer />} />
                 <Route path="/playground" element={<Playground />} />
               </Routes>

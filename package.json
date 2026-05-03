@@ -11,7 +11,10 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "@genkit-ai/google-genai": "^1.33.0",
+    "@genkit-ai/googleai": "^1.28.0",
     "@google/genai": "^1.29.0",
+    "@google/generative-ai": "^0.24.1",
     "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/canvas-confetti": "^1.9.0",
@@ -25,6 +28,7 @@
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
     "firebase": "^12.12.1",
+    "genkit": "^1.33.0",
     "lucide-react": "^0.546.0",
     "motion": "^12.38.0",
     "prismjs": "^1.30.0",
