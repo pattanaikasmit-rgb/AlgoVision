@@ -3,20 +3,19 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// Firebase configuration using environment variables
+// Firebase configuration
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'demo-key',
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'demo.firebaseapp.com',
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'demo-project',
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'demo.appspot.com',
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789:web:demo',
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-DEMO',
-  firestoreDatabaseId: import.meta.env.VITE_FIRESTORE_DATABASE_ID || 'demo-project'
+  apiKey: "AIzaSyCP5xHDImY4oBvVlPISwCwHornGu3piHs4",
+  authDomain: "algovision-67d66.firebaseapp.com",
+  projectId: "algovision-67d66",
+  storageBucket: "algovision-67d66.firebasestorage.app",
+  messagingSenderId: "528078903298",
+  appId: "1:528078903298:web:acb5172c657186a7d0af1b",
+  measurementId: "G-HJLK3C34HH"
 };
 
 // Initialize Firebase SDK
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const storage = getStorage(app);
