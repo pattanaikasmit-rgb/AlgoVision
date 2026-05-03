@@ -3,8 +3,17 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
-// Import the Firebase configuration
-import firebaseConfig from '../../firebase-applet-config.json';
+// Firebase configuration using environment variables
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'demo-key',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'demo.firebaseapp.com',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'demo-project',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'demo.appspot.com',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '123456789',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '1:123456789:web:demo',
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || 'G-DEMO',
+  firestoreDatabaseId: import.meta.env.VITE_FIRESTORE_DATABASE_ID || 'demo-project'
+};
 
 // Initialize Firebase SDK
 const app = initializeApp(firebaseConfig);
