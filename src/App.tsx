@@ -16,6 +16,7 @@ import Navbar from './components/layout/Navbar';
 import AITutor from './components/AITutor';
 import DebugTest from './components/DebugTest';
 import AuthDebug from './components/AuthDebug';
+import EnhancedAuth from './components/EnhancedAuth';
 import { ToastProvider } from './components/Toast';
 
 export default function App() {
@@ -46,6 +47,7 @@ export default function App() {
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/debug" element={<DebugTest />} />
                 <Route path="/auth-debug" element={<AuthDebug />} />
+                <Route path="/enhanced-auth" element={<EnhancedAuth />} />
                 <Route path="/visualize/:category/:algorithm" element={<Visualizer />} />
                 <Route path="/playground" element={<Playground />} />
               </Routes>
